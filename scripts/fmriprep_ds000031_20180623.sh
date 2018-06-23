@@ -48,13 +48,13 @@ singularity run \
   -B ${freesufer_license}:/freesurfer_license.txt \
   ${fmriprep_container} \
       /scratch/bids /scratch/output/${ana_prefix} participant \
-      --nthreads 8 \
-      --omp-nthreads 8 \
+      --nthreads 40 \
+      --omp-nthreads 40 \
       --use-aroma \
       ${ana_flags} \
       --output-space T1w template \
       --work-dir /scratch/work/${ana_prefix} \
-      --notrack --fs-license-file /freesurfer_license.txt &
+      --notrack --fs-license-file /freesurfer_license.txt
 
 # syn-sdc: --use-syn-sdc --ignore fieldmaps
 ana_prefix="syn-sdc"
@@ -68,8 +68,28 @@ singularity run \
   -B ${freesufer_license}:/freesurfer_license.txt \
   ${fmriprep_container} \
       /scratch/bids /scratch/output/${ana_prefix} participant \
-      --nthreads 8 \
-      --omp-nthreads 8 \
+      --nthreads 40 \
+      --omp-nthreads 40 \
+      --use-aroma \
+      ${ana_flags} \
+      --output-space T1w template \
+      --work-dir /scratch/work/${ana_prefix} \
+      --notrack --fs-license-file /freesurfer_license.txt
+
+# none: --ignore fieldmaps
+ana_prefix="none"
+ana_flags="--ignore fieldmaps"
+mkdir -p ${scratch_dir}/work/${ana_prefix}
+mkdir -p ${scratch_dir}/output/${ana_prefix}
+rsync -avL $SCRATCH/datalad/datalad/ds000031/derivatives/fmriprep_1.0.0/freesurfer ${scratch_dir}/output/${ana_prefix}/
+singularity run \
+  -H ${sing_home} \
+  -B ${scratch_dir}:/scratch \
+  -B ${freesufer_license}:/freesurfer_license.txt \
+  ${fmriprep_container} \
+      /scratch/bids /scratch/output/${ana_prefix} participant \
+      --nthreads 20 \
+      --omp-nthreads 20 \
       --use-aroma \
       ${ana_flags} \
       --output-space T1w template \
@@ -88,30 +108,10 @@ singularity run \
   -B ${freesufer_license}:/freesurfer_license.txt \
   ${fmriprep_container} \
       /scratch/bids /scratch/output/${ana_prefix} participant \
-      --nthreads 8 \
-      --omp-nthreads 8 \
+      --nthreads 20 \
+      --omp-nthreads 20 \
       --use-aroma \
       ${ana_flags} \
       --output-space T1w template \
       --work-dir /scratch/work/${ana_prefix} \
-      --notrack --fs-license-file /freesurfer_license.txt &
-
-# none: --ignore fieldmaps
-ana_prefix="none"
-ana_flags="--ignore fieldmaps"
-mkdir -p ${scratch_dir}/work/${ana_prefix}
-mkdir -p ${scratch_dir}/output/${ana_prefix}
-rsync -avL $SCRATCH/datalad/datalad/ds000031/derivatives/fmriprep_1.0.0/freesurfer ${scratch_dir}/output/${ana_prefix}/
-singularity run \
-  -H ${sing_home} \
-  -B ${scratch_dir}:/scratch \
-  -B ${freesufer_license}:/freesurfer_license.txt \
-  ${fmriprep_container} \
-      /scratch/bids /scratch/output/${ana_prefix} participant \
-      --nthreads 8 \
-      --omp-nthreads 8 \
-      --use-aroma \
-      ${ana_flags} \
-      --output-space T1w template \
-      --work-dir /scratch/work/${ana_prefix} \
-      --notrack --fs-license-file /freesurfer_license.txt &
+      --notrack --fs-license-file /freesurfer_license.txt 
