@@ -68,4 +68,4 @@ echo "singularity run \
       --work-dir /scratch/work/${ana_prefix} \
       --notrack --fs-license-file /freesurfer_license.txt" >> jcmds.txt
 
-parallel -j 2 jcmds.txt
+parallel -j 2 :::: jcmds.txt
