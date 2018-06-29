@@ -42,7 +42,7 @@ ana_flags=""
 mkdir -p ${scratch_dir}/work/${ana_prefix}
 mkdir -p ${scratch_dir}/output/${ana_prefix}
 rsync -avL ${scratch_dir}/pre_derivatives/freesurfer ${scratch_dir}/output/${ana_prefix}/
-singularity run \
+echo "singularity run \
   -H ${sing_home} \
   -B ${scratch_dir}:/scratch \
   -B ${freesufer_license}:/freesurfer_license.txt \
@@ -54,7 +54,7 @@ singularity run \
       ${ana_flags} \
       --output-space T1w template \
       --work-dir /scratch/work/${ana_prefix} \
-      --notrack --fs-license-file /freesurfer_license.txt > jcmds_ds000031.txt
+      --notrack --fs-license-file /freesurfer_license.txt" > jcmds_ds000031.txt
 
 # syn-sdc: --use-syn-sdc --ignore fieldmaps
 ana_prefix="syn-sdc"
@@ -62,7 +62,7 @@ ana_flags="--use-syn-sdc --ignore fieldmaps"
 mkdir -p ${scratch_dir}/work/${ana_prefix}
 mkdir -p ${scratch_dir}/output/${ana_prefix}
 rsync -avL ${scratch_dir}/pre_derivatives/freesurfer ${scratch_dir}/output/${ana_prefix}/
-singularity run \
+echo "singularity run \
   -H ${sing_home} \
   -B ${scratch_dir}:/scratch \
   -B ${freesufer_license}:/freesurfer_license.txt \
@@ -74,7 +74,7 @@ singularity run \
       ${ana_flags} \
       --output-space T1w template \
       --work-dir /scratch/work/${ana_prefix} \
-      --notrack --fs-license-file /freesurfer_license.txt >> jcmds_ds000031.txt
+      --notrack --fs-license-file /freesurfer_license.txt" >> jcmds_ds000031.txt
 
 # none: --ignore fieldmaps
 ana_prefix="none"
@@ -82,7 +82,7 @@ ana_flags="--ignore fieldmaps"
 mkdir -p ${scratch_dir}/work/${ana_prefix}
 mkdir -p ${scratch_dir}/output/${ana_prefix}
 rsync -avL ${scratch_dir}/pre_derivatives/freesurfer ${scratch_dir}/output/${ana_prefix}/
-singularity run \
+echo "singularity run \
   -H ${sing_home} \
   -B ${scratch_dir}:/scratch \
   -B ${freesufer_license}:/freesurfer_license.txt \
@@ -94,7 +94,7 @@ singularity run \
       ${ana_flags} \
       --output-space T1w template \
       --work-dir /scratch/work/${ana_prefix} \
-      --notrack --fs-license-file /freesurfer_license.txt >> jcmds_ds000031.txt
+      --notrack --fs-license-file /freesurfer_license.txt" >> jcmds_ds000031.txt
 
 # force-syn: --force-syn
 ana_prefix="force-syn"
@@ -102,7 +102,7 @@ ana_flags="--force-syn"
 mkdir -p ${scratch_dir}/work/${ana_prefix}
 mkdir -p ${scratch_dir}/output/${ana_prefix}
 rsync -avL ${scratch_dir}/pre_derivatives/freesurfer ${scratch_dir}/output/${ana_prefix}/
-singularity run \
+echo "singularity run \
   -H ${sing_home} \
   -B ${scratch_dir}:/scratch \
   -B ${freesufer_license}:/freesurfer_license.txt \
@@ -114,6 +114,6 @@ singularity run \
       ${ana_flags} \
       --output-space T1w template \
       --work-dir /scratch/work/${ana_prefix} \
-      --notrack --fs-license-file /freesurfer_license.txt >> jcmds_ds000031.txt
+      --notrack --fs-license-file /freesurfer_license.txt" >> jcmds_ds000031.txt
 
 parallel -j 4 :::: jcmds_ds000031.txt
