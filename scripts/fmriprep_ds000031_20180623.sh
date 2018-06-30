@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=40
-#SBATCH --time=6:00:00
+#SBATCH --cpus-per-task=80
+#SBATCH --time=11:00:00
 #SBATCH --job-name fmriprep_ds000031
 #SBATCH --output=fmriprep_ds000031_%j.txt
 
@@ -28,8 +28,21 @@ export fmriprep_container=/scinet/course/ss2018/3_bm/2_imageanalysis/singularity
 ## build the mounts
 sing_home=$SCRATCH/sing_home
 scratch_dir=$SCRATCH/ciftify_paper/ds000031
+workbase=/dev/shm/$USER
 
+mkdir -p ${workbase}
 
+function cleanup_ramdisk {
+    echo -n "Cleaning up ramdisk directory ${workbase} on "
+    date
+    rm -rf ${workbase}
+    echo -n "done at "
+    date
+}
+
+#trap the termination signal, and call the function 'trap_term' when
+# that happens, so results may be saved.
+trap cleanup_ramdisk TERM
 
 # Options we will run separately
 # phase: (default usage)
@@ -39,81 +52,87 @@ scratch_dir=$SCRATCH/ciftify_paper/ds000031
 
 ana_prefix="phase"
 ana_flags=""
-mkdir -p ${scratch_dir}/work/${ana_prefix}
+mkdir -p ${workbase}/${ana_prefix}
 mkdir -p ${scratch_dir}/output/${ana_prefix}
 rsync -avL ${scratch_dir}/pre_derivatives/freesurfer ${scratch_dir}/output/${ana_prefix}/
 echo "singularity run \
   -H ${sing_home} \
   -B ${scratch_dir}:/scratch \
+  -B ${workbase}:/work \
   -B ${freesufer_license}:/freesurfer_license.txt \
   ${fmriprep_container} \
       /scratch/bids /scratch/output/${ana_prefix} participant \
-      --nthreads 10 \
+      --nthreads 20 \
       --omp-nthreads 10 \
       --use-aroma \
       ${ana_flags} \
       --output-space T1w template \
-      --work-dir /scratch/work/${ana_prefix} \
+      --work-dir /work/${ana_prefix} \
       --notrack --fs-license-file /freesurfer_license.txt" > jcmds_ds000031.txt
 
 # syn-sdc: --use-syn-sdc --ignore fieldmaps
 ana_prefix="syn-sdc"
 ana_flags="--use-syn-sdc --ignore fieldmaps"
-mkdir -p ${scratch_dir}/work/${ana_prefix}
+mkdir -p ${workbase}/${ana_prefix}
 mkdir -p ${scratch_dir}/output/${ana_prefix}
 rsync -avL ${scratch_dir}/pre_derivatives/freesurfer ${scratch_dir}/output/${ana_prefix}/
 echo "singularity run \
   -H ${sing_home} \
   -B ${scratch_dir}:/scratch \
+  -B ${workbase}:/work \
   -B ${freesufer_license}:/freesurfer_license.txt \
   ${fmriprep_container} \
       /scratch/bids /scratch/output/${ana_prefix} participant \
-      --nthreads 10 \
+      --nthreads 20 \
       --omp-nthreads 10 \
       --use-aroma \
       ${ana_flags} \
       --output-space T1w template \
-      --work-dir /scratch/work/${ana_prefix} \
+      --work-dir /work/${ana_prefix} \
       --notrack --fs-license-file /freesurfer_license.txt" >> jcmds_ds000031.txt
 
 # none: --ignore fieldmaps
 ana_prefix="none"
 ana_flags="--ignore fieldmaps"
-mkdir -p ${scratch_dir}/work/${ana_prefix}
+mkdir -p ${workbase}/${ana_prefix}
 mkdir -p ${scratch_dir}/output/${ana_prefix}
 rsync -avL ${scratch_dir}/pre_derivatives/freesurfer ${scratch_dir}/output/${ana_prefix}/
 echo "singularity run \
   -H ${sing_home} \
   -B ${scratch_dir}:/scratch \
+  -B ${workbase}:/work \
   -B ${freesufer_license}:/freesurfer_license.txt \
   ${fmriprep_container} \
       /scratch/bids /scratch/output/${ana_prefix} participant \
-      --nthreads 10 \
+      --nthreads 20 \
       --omp-nthreads 10 \
       --use-aroma \
       ${ana_flags} \
       --output-space T1w template \
-      --work-dir /scratch/work/${ana_prefix} \
+      --work-dir /work/${ana_prefix} \
       --notrack --fs-license-file /freesurfer_license.txt" >> jcmds_ds000031.txt
 
 # force-syn: --force-syn
 ana_prefix="force-syn"
 ana_flags="--force-syn"
-mkdir -p ${scratch_dir}/work/${ana_prefix}
+mkdir -p ${workbase}/${ana_prefix}
 mkdir -p ${scratch_dir}/output/${ana_prefix}
 rsync -avL ${scratch_dir}/pre_derivatives/freesurfer ${scratch_dir}/output/${ana_prefix}/
 echo "singularity run \
   -H ${sing_home} \
   -B ${scratch_dir}:/scratch \
+  -B ${workbase}:/work \
   -B ${freesufer_license}:/freesurfer_license.txt \
   ${fmriprep_container} \
       /scratch/bids /scratch/output/${ana_prefix} participant \
-      --nthreads 10 \
+      --nthreads 20 \
       --omp-nthreads 10 \
       --use-aroma \
       ${ana_flags} \
       --output-space T1w template \
-      --work-dir /scratch/work/${ana_prefix} \
+      --work-dir /work/${ana_prefix} \
       --notrack --fs-license-file /freesurfer_license.txt" >> jcmds_ds000031.txt
 
 parallel -j 4 :::: jcmds_ds000031.txt
+
+cleanup_ramdisk
