@@ -78,7 +78,7 @@ echo "singularity run \
   -B ${scratch_dir}:/scratch \
   -B ${freesufer_license}:/freesurfer_license.txt \
   ${fmriprep_container} \
-      /scratch/hcp_example_bids_v5_phase_nosbref /scratch/output/${ana_prefix} participant \
+      /scratch/hcp_example_bids_v5_phase_nosbref /scratch/output2/${ana_prefix} participant \
       --nthreads 10 \
       --omp-nthreads 10 \
       --use-aroma \
@@ -97,7 +97,7 @@ echo "singularity run \
   -B ${scratch_dir}:/scratch \
   -B ${freesufer_license}:/freesurfer_license.txt \
   ${fmriprep_container} \
-      /scratch/hcp_example_bids_v5_phase_nosbref /scratch/output1/${ana_prefix} participant \
+      /scratch/hcp_example_bids_v5_phase_nosbref /scratch/output2/${ana_prefix} participant \
       --nthreads 10 \
       --omp-nthreads 10 \
       --use-aroma \
