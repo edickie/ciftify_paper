@@ -2,6 +2,8 @@
 
 ## running on kandel 2018-07-04 using ciftify's new run.py to help develop the commands
 
+set +x
+
 ciftify_recon_all --n_cpus 4 --ciftify-work-dir /scratch/edickie/ciftify_paper/ds000031/output/ciftify --fs-subjects-dir /scratch/edickie/ciftify_paper/ds000031/output/phase/freesurfer --surf-reg MSMSulc sub-01
 
 cifti_vis_recon_all subject --ciftify-work-dir /scratch/edickie/ciftify_paper/ds000031/output/ciftify sub-01
