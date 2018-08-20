@@ -22,3 +22,12 @@ ciftify_subject_fmri --n_cpus 4 --ciftify-work-dir /scratch/edickie/ciftify_pape
 cifti_vis_fmri subject --ciftify-work-dir /scratch/edickie/ciftify_paper/ds000031/output/ciftify ses-018_task-rest_run-001_${anatype} sub-01
 
 done
+
+# I recently decided it was worth putting  a "straw man" no-SDC FSL corrcoef..
+ciftify_subject_fmri --n_cpus 4 --ciftify-work-dir /scratch/edickie/ciftify_paper/ds000031/output/ciftify --surf-reg MSMSulc --FLIRT-to-T1w \
+  /scratch/edickie/ciftify_paper/ds000031/output/none/fmriprep/sub-01/ses-018/func/sub-01_ses-018_task-rest_run-001_bold_space-T1w_preproc.nii.gz \
+  sub-01 ses-018_task-rest_run-001_noneFLIRT
+
+cifti_vis_fmri subject --ciftify-work-dir /scratch/edickie/ciftify_paper/ds000031/output/ciftify ses-018_task-rest_run-001_noneFLIRT sub-01
+
+cifti_vis_fmri index --ciftify-work-dir /scratch/edickie/ciftify_paper/ds000031/output/ciftify
